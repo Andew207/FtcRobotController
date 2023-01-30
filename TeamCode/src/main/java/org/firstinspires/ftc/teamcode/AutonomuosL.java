@@ -122,15 +122,16 @@ public class AutonomuosL extends LinearOpMode {
     double currentPosition = 0;
     if (position > 0) {
       while (currentPosition < position && opModeIsActive()) {
-        setAllPower(0.25);
         currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
-        telemetry.addData("Current Position", currentPosition);
+        double pid = (1-currentPosition/position)*(0.25-0.1)+0.1;
+        setAllPower(pid);
       }
     }
     else if (position < 0){
       while (currentPosition > position && opModeIsActive()){
-        setAllPower(-0.25);
         currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
+        double pid = (1-currentPosition/position)*(0.25-0.1)+0.1;
+        setAllPower(-pid);
       }
     }
 
@@ -378,7 +379,7 @@ public class AutonomuosL extends LinearOpMode {
       setAllPower(0);
     }
     if (rgb.equals("red")){
-      goToPosition(-350);
+      goToPosition(-375);
     }
     else if (rgb.equals("green")){
       goToPositionPower(440,0.1);
