@@ -106,10 +106,10 @@ public class AutonomuosR extends LinearOpMode {
     }
     else{
       while (frontLeftDrive.getCurrentPosition() < position && opModeIsActive()){
-        frontLeftDrive.setPower(0.25);
-        frontRightDrive.setPower(-0.25);
-        backRightDrive.setPower(0.25);
-        backLeftDrive.setPower(-0.25);
+        frontLeftDrive.setPower(0.35);
+        frontRightDrive.setPower(-0.35);
+        backRightDrive.setPower(0.35);
+        backLeftDrive.setPower(-0.35);
       }
     }
   }
@@ -249,7 +249,7 @@ public class AutonomuosR extends LinearOpMode {
     }
     lift.setPower(0);
     // Loop until we are asked to stop
-    while(opModeIsActive() && ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) > 3 && (-frontRightDrive.getCurrentPosition()+frontLeftDrive.getCurrentPosition()-backLeftDrive.getCurrentPosition()+backRightDrive.getCurrentPosition())/4 < 450){
+    while(opModeIsActive() && (frontRightDrive.getCurrentPosition()+frontLeftDrive.getCurrentPosition()-backLeftDrive.getCurrentPosition()+backRightDrive.getCurrentPosition())/4 < 475){
       frontLeftDrive.setPower(0.25);
       frontRightDrive.setPower(-0.25);
       backLeftDrive.setPower(-0.25);
@@ -326,17 +326,10 @@ public class AutonomuosR extends LinearOpMode {
     }
     telemetry.addData("Final color:", rgb);
     telemetry.update();
-    while(opModeIsActive()){
-      strafe(false, 390);
-      setAllPower(0);
-      break;
-    }
     lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     while(opModeIsActive() && lift.getCurrentPosition() > -2500){
       lift.setPower(-0.75);
-      telemetry.addData("lift encoder", lift.getCurrentPosition());
-      telemetry.update();
     }
     lift.setPower(0);
     goToPosition(1);
