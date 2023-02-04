@@ -341,9 +341,10 @@ public class AutonomuosR extends LinearOpMode {
       servo.setPower(-0.5);
     }
     servo.setPower(0);
-    while(opModeIsActive() && lift.getCurrentPosition() > -200){
+    while(opModeIsActive() && lift.getCurrentPosition() > -2550){
       lift.setPower(-0.75);
     }
+    lift.setPower(0);
     goToPosition(-50);
     strafe(true, 180);
     timer.reset();

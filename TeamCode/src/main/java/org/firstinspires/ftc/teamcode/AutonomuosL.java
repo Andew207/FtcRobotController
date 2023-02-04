@@ -343,7 +343,7 @@ public class AutonomuosL extends LinearOpMode {
     telemetry.addData("Final color:", rgb);
     telemetry.update();
     while(opModeIsActive()){
-      strafe(true, 320);
+      strafe(true, 325);
       setAllPower(0);
       break;
     }
@@ -370,9 +370,11 @@ public class AutonomuosL extends LinearOpMode {
       servo.setPower(-0.5);
     }
     servo.setPower(0);
-    while(opModeIsActive() && lift.getCurrentPosition() > -200){
+
+    while(opModeIsActive() && lift.getCurrentPosition() > -2550){
       lift.setPower(-0.75);
     }
+    lift.setPower(0);
     goToPosition(-60);
     strafe(false, 175);
     timer.reset();
@@ -382,10 +384,10 @@ public class AutonomuosL extends LinearOpMode {
       setAllPower(0);
     }
     if (rgb.equals("red")){
-      goToPosition(-375);
+      goToPosition(-390);
     }
     else if (rgb.equals("green")){
-      goToPosition(450);
+      goToPosition(440);
     }
     setAllPower(0);
     while (opModeIsActive() && backLimit.isPressed() == false){
