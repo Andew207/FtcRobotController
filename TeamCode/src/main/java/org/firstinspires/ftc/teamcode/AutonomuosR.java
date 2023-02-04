@@ -1,32 +1,3 @@
-/* Copyright (c) 2017-2020 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import android.app.Activity;
@@ -81,6 +52,7 @@ public class AutonomuosR extends LinearOpMode {
   private DcMotor turnMech = null;
   private TouchSensor frontLimit = null;
   private TouchSensor backLimit = null;
+
   public void setMotorMode(DcMotor.RunMode runMode){
     frontLeftDrive.setMode(runMode);
     backLeftDrive.setMode(runMode);
@@ -104,16 +76,17 @@ public class AutonomuosR extends LinearOpMode {
         backRightDrive.setPower(-0.3);
       }
     }
-    else{
-      while (frontLeftDrive.getCurrentPosition() < position && opModeIsActive()){
-        frontLeftDrive.setPower(0.35);
-        frontRightDrive.setPower(-0.35);
-        backRightDrive.setPower(0.35);
-        backLeftDrive.setPower(-0.35);
+    else {
+      while (frontLeftDrive.getCurrentPosition() < position && opModeIsActive()) {
+        frontLeftDrive.setPower(0.25);
+        frontRightDrive.setPower(-0.25);
+        backRightDrive.setPower(0.25);
+        backLeftDrive.setPower(-0.25);
       }
     }
   }
-  public void goToPosition(int position) {
+  public void goToPosition(int position)
+  {
     setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -121,20 +94,44 @@ public class AutonomuosR extends LinearOpMode {
     if (position > 0) {
       while (currentPosition < position && opModeIsActive()) {
         currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
-        double pid = (1 - currentPosition / position) * (0.25 - 0.1) + 0.1;
+        double pid = (1-currentPosition/position)*(0.25-0.1)+0.1;
         setAllPower(pid);
       }
-    } else if (position < 0) {
-      while (currentPosition > position && opModeIsActive()) {
+    }
+    else if (position < 0){
+      while (currentPosition > position && opModeIsActive()){
         currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
-        double pid = (1 - currentPosition / position) * (0.25 - 0.1) + 0.1;
+        double pid = (1-currentPosition/position)*(0.25-0.1)+0.1;
         setAllPower(-pid);
       }
     }
 
+    setAllPower(0);
+  }
+  public void goToPositionPower(int position, double power)
+  {
+    setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    double currentPosition = 0;
+    if (position > 0) {
+      while (currentPosition < position && opModeIsActive()) {
+        setAllPower(power);
+        currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
+        telemetry.addData("Current Position", currentPosition);
+      }
+    }
+    else if (position < 0){
+      while (currentPosition > position && opModeIsActive()){
+        setAllPower(-power);
+        currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
+      }
+    }
+
+    setAllPower(0);
   }
 
-    /** The colorSensor field will contain a reference to our color sensor hardware object */
+  /** The colorSensor field will contain a reference to our color sensor hardware object */
   NormalizedColorSensor colorSensor;
 
   /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -195,7 +192,7 @@ public class AutonomuosR extends LinearOpMode {
           relativeLayout.setBackgroundColor(Color.WHITE);
         }
       });
-      }
+    }
   }
 
   protected void runSample() {
@@ -248,43 +245,33 @@ public class AutonomuosR extends LinearOpMode {
       lift.setPower(-0.5);
     }
     lift.setPower(0);
+
     // Loop until we are asked to stop
-    while(opModeIsActive() && (frontRightDrive.getCurrentPosition()+frontLeftDrive.getCurrentPosition()-backLeftDrive.getCurrentPosition()+backRightDrive.getCurrentPosition())/4 < 475){
+    while(opModeIsActive() && ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM) > 2 && (-frontRightDrive.getCurrentPosition()+frontLeftDrive.getCurrentPosition()-backLeftDrive.getCurrentPosition()+backRightDrive.getCurrentPosition())/4 < 450){
       frontLeftDrive.setPower(0.25);
       frontRightDrive.setPower(-0.25);
       backLeftDrive.setPower(-0.25);
       backRightDrive.setPower(0.25);
     }
     setAllPower(0);
+
     timer.reset();
     timer.startTime();
     while (opModeIsActive() && timer.time() < 2) {
 
       // Explain basic gain information via telemetry
-      //telemetry.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.\n");
-      //telemetry.addLine("Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value\n");
+      telemetry.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.\n");
+      telemetry.addLine("Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value\n");
 
 
 
       // Show the gain value via telemetry
       telemetry.addData("Gain", gain);
-
-      // Tell the sensor our desired gain value (normally you would do this during initialization,
-      // not during the loop)
       colorSensor.setGain(gain);
-
-
       // Get the normalized colors from the sensor
       NormalizedRGBA colors = colorSensor.getNormalizedColors();
-
-      /* Use telemetry to display feedback on the driver station. We show the red, green, and blue
-       * normalized values from the sensor (in the range of 0 to 1), as well as the equivalent
-       * HSV (hue, saturation and value) values. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
-       * for an explanation of HSV color. */
-
       // Update the hsvValues array by passing it to Color.colorToHSV()
       Color.colorToHSV(colors.toColor(), hsvValues);
-
       telemetry.addLine()
               .addData("Red", "%.3f", colors.red)
               .addData("Green", "%.3f", colors.green)
@@ -326,31 +313,39 @@ public class AutonomuosR extends LinearOpMode {
     }
     telemetry.addData("Final color:", rgb);
     telemetry.update();
+    while(opModeIsActive()){
+      strafe(false, 415);
+      setAllPower(0);
+      break;
+    }
     lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     while(opModeIsActive() && lift.getCurrentPosition() > -2500){
       lift.setPower(-0.75);
+      telemetry.addData("lift encoder", lift.getCurrentPosition());
+      telemetry.update();
     }
     lift.setPower(0);
-    goToPosition(1);
-    telemetry.addData("motors", frontLeftDrive.getCurrentPosition());
+    goToPosition(40);
 
     timer.reset();
     timer.startTime();
     while (opModeIsActive() && !frontLimit.isPressed() && timer.time() < 1){
-      turnMech.setPower(-0.1);
+      turnMech.setPower(-0.25);
+      telemetry.addData("Button pressed?", frontLimit.isPressed());
     }
     turnMech.setPower(0);
-
-
     timer.reset();
     timer.startTime();
     while (opModeIsActive() && timer.time() < 2){
       servo.setPower(-0.5);
     }
     servo.setPower(0);
+    while(opModeIsActive() && lift.getCurrentPosition() > -200){
+      lift.setPower(-0.75);
+    }
     goToPosition(-50);
-    strafe(true, 200);
+    strafe(true, 180);
     timer.reset();
     timer.startTime();
     while(opModeIsActive() && timer.time() < 2){
@@ -358,7 +353,7 @@ public class AutonomuosR extends LinearOpMode {
       setAllPower(0);
     }
     if (rgb.equals("red")){
-      goToPosition(440);
+      goToPosition(410);
     }
     else if (rgb.equals("green")){
       goToPosition(-450);
@@ -368,5 +363,6 @@ public class AutonomuosR extends LinearOpMode {
       turnMech.setPower(0.1);
     }
     turnMech.setPower(0);
+
   }
 }
