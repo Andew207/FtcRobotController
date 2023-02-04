@@ -343,7 +343,7 @@ public class AutonomuosL extends LinearOpMode {
     telemetry.addData("Final color:", rgb);
     telemetry.update();
     while(opModeIsActive()){
-      strafe(true, 310);
+      strafe(true, 320);
       setAllPower(0);
       break;
     }
@@ -355,11 +355,11 @@ public class AutonomuosL extends LinearOpMode {
       telemetry.update();
     }
     lift.setPower(0);
-    goToPosition(50);
+    goToPosition(60);
 
     timer.reset();
     timer.startTime();
-    while (opModeIsActive() && frontLimit.isPressed() == false && timer.time() < 2){
+    while (opModeIsActive() && !frontLimit.isPressed() && timer.time() < 1){
       turnMech.setPower(-0.25);
       telemetry.addData("Button pressed?", frontLimit.isPressed());
     }
@@ -370,7 +370,7 @@ public class AutonomuosL extends LinearOpMode {
       servo.setPower(-0.5);
     }
     servo.setPower(0);
-    goToPosition(-50);
+    goToPosition(-60);
     strafe(false, 175);
     timer.reset();
     timer.startTime();
@@ -382,7 +382,7 @@ public class AutonomuosL extends LinearOpMode {
       goToPosition(-375);
     }
     else if (rgb.equals("green")){
-      goToPositionPower(440,0.1);
+      goToPosition(450);
     }
     setAllPower(0);
     while (opModeIsActive() && backLimit.isPressed() == false){

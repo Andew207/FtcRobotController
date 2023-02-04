@@ -112,52 +112,29 @@ public class AutonomuosR extends LinearOpMode {
         backLeftDrive.setPower(-0.25);
       }
     }
-  }public void goToPositionPower(int position, double power)
-  {
+  }
+  public void goToPosition(int position) {
     setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     double currentPosition = 0;
     if (position > 0) {
       while (currentPosition < position && opModeIsActive()) {
-        setAllPower(power);
         currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
-        telemetry.addData("Current Position", currentPosition);
+        double pid = (1 - currentPosition / position) * (0.25 - 0.1) + 0.1;
+        setAllPower(pid);
       }
-    }
-    else if (position < 0){
-      while (currentPosition > position && opModeIsActive()){
-        setAllPower(-power);
+    } else if (position < 0) {
+      while (currentPosition > position && opModeIsActive()) {
         currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
+        double pid = (1 - currentPosition / position) * (0.25 - 0.1) + 0.1;
+        setAllPower(-pid);
       }
     }
 
-    setAllPower(0);
   }
 
-  public void goToPosition(int position)
-  {
-    setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    double currentPosition = 0;
-    if (position > 0) {
-      while (currentPosition < position && opModeIsActive()) {
-        setAllPower(0.25);
-        currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
-        telemetry.addData("Current Position", currentPosition);
-      }
-    }
-    else if (position < 0){
-      while (currentPosition > position && opModeIsActive()){
-        setAllPower(-0.25);
-        currentPosition = (frontRightDrive.getCurrentPosition() + frontLeftDrive.getCurrentPosition() + backLeftDrive.getCurrentPosition() + backRightDrive.getCurrentPosition()) / 4;
-      }
-    }
-
-    setAllPower(0);
-  }
-  /** The colorSensor field will contain a reference to our color sensor hardware object */
+    /** The colorSensor field will contain a reference to our color sensor hardware object */
   NormalizedColorSensor colorSensor;
 
   /** The relativeLayout field is used to aid in providing interesting visual feedback
@@ -356,25 +333,21 @@ public class AutonomuosR extends LinearOpMode {
     }
     lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    while(opModeIsActive() && lift.getCurrentPosition() > -2400){
+    while(opModeIsActive() && lift.getCurrentPosition() > -2500){
       lift.setPower(-0.75);
       telemetry.addData("lift encoder", lift.getCurrentPosition());
       telemetry.update();
     }
     lift.setPower(0);
-    goToPosition(30);
+    goToPosition(1);
+    telemetry.addData("motors", frontLeftDrive.getCurrentPosition());
 
-    while (opModeIsActive() && frontLimit.isPressed() == false){
+    timer.reset();
+    timer.startTime();
+    while (opModeIsActive() && !frontLimit.isPressed() && timer.time() < 1){
       turnMech.setPower(-0.1);
     }
     turnMech.setPower(0);
-
-    lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    while(opModeIsActive() && lift.getCurrentPosition() > 500){
-      lift.setPower(0.75);
-      telemetry.addData("lift encoder", lift.getCurrentPosition());
-      telemetry.update();
-    }
 
 
     timer.reset();
@@ -383,7 +356,7 @@ public class AutonomuosR extends LinearOpMode {
       servo.setPower(-0.5);
     }
     servo.setPower(0);
-    goToPosition(-30);
+    goToPosition(-50);
     strafe(true, 200);
     timer.reset();
     timer.startTime();
@@ -392,7 +365,7 @@ public class AutonomuosR extends LinearOpMode {
       setAllPower(0);
     }
     if (rgb.equals("red")){
-      goToPositionPower(440, 0.1);
+      goToPosition(440);
     }
     else if (rgb.equals("green")){
       goToPosition(-450);
