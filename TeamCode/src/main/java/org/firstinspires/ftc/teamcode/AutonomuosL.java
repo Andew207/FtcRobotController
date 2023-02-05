@@ -387,7 +387,7 @@ public class AutonomuosL extends LinearOpMode {
       goToPosition(-390);
     }
     else if (rgb.equals("green")){
-      goToPosition(440);
+      goToPosition(430);
     }
     setAllPower(0);
     while (opModeIsActive() && backLimit.isPressed() == false){
