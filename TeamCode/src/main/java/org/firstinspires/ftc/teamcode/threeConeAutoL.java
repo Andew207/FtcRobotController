@@ -405,6 +405,7 @@ public class threeConeAutoL extends LinearOpMode {
       servo.setPower(-0.5);
     }
     servo.setPower(0);
+    // NUMBERS ARE ALL WRONG, DO NOT RUN
     /*strafe(false, 175);
     timer.reset();
     timer.startTime();
