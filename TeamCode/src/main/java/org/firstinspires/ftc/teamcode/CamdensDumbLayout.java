@@ -197,8 +197,7 @@ public class CamdensDumbLayout extends LinearOpMode {
             telemetry.addData("ldpad", dpadleft);
             telemetry.addData("rdpad", dpadright);
             telemetry.addData("FLimit", frontLimit.isPressed());
-            telemetry.addData("BLimit", backLimit.isPressed());
-            telemetry.update();
+            telemetry.addData("BLimit", backLimit.isPressed());telemetry.update();
         }
     }
 }
