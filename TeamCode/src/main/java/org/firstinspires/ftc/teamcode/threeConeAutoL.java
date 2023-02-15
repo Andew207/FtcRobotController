@@ -343,7 +343,7 @@ public class threeConeAutoL extends LinearOpMode {
     telemetry.addData("Final color:", rgb);
     telemetry.update();
     while(opModeIsActive()){
-      strafe(true, 325);
+      strafe(true, 320);
       setAllPower(0);
       break;
     }
@@ -376,9 +376,11 @@ public class threeConeAutoL extends LinearOpMode {
     }
     lift.setPower(0);
     goToPosition(-60);
-    strafe(true, 0);
-    timer.reset();
-    timer.startTime();
+    strafe(true, 5);
+    telemetry.addData("FR Encoder", frontRightDrive.getCurrentPosition());
+    telemetry.update();
+    //Thread.sleep(3000);
+
     while (opModeIsActive() && !backLimit.isPressed()){
       turnMech.setPower(0.5);
     }
@@ -386,14 +388,14 @@ public class threeConeAutoL extends LinearOpMode {
       lift.setPower(-0.75);
     }
     lift.setPower(0);
-    goToPosition(-60);
+    goToPosition(-100);
     while(opModeIsActive() && lift.getCurrentPosition() > -1500){
       lift.setPower(0.75);
       servo.setPower(0.5);
     }
     lift.setPower(0);
     servo.setPower(0);
-    goToPosition(60);
+    goToPosition(100);
     strafe(true, 0);
     while(opModeIsActive() && lift.getCurrentPosition() > -2000){
       lift.setPower(-0.75);
