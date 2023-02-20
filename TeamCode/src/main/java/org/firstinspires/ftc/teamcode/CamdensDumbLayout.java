@@ -66,8 +66,8 @@ public class CamdensDumbLayout extends LinearOpMode {
     private CRServo servo1 = null;
     private TouchSensor frontLimit = null;
     private TouchSensor backLimit = null;
-
-
+    private TouchSensor liftLimit = null;
+    private double robotest = 0.0;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -85,6 +85,7 @@ public class CamdensDumbLayout extends LinearOpMode {
         servo1 = hardwareMap.crservo.get("servo1");
         frontLimit = hardwareMap.touchSensor.get("frontLimit");
         backLimit = hardwareMap.touchSensor.get("backLimit");
+        liftLimit = hardwareMap.touchSensor.get("liftLimit");
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         int slow = 1;
@@ -131,7 +132,14 @@ public class CamdensDumbLayout extends LinearOpMode {
                 else slow = 1;
                 changed = true;
             } else if(!gamepad1.b) changed = false;
-            double robotest = Range.clip(gamepad2.left_trigger - gamepad2.right_trigger, -1, 1);
+            //Left trigger is down, lift motor is backwards
+            if (gamepad2.left_trigger != 0 && !liftLimit.isPressed()){
+                robotest = Range.clip(gamepad2.left_trigger - gamepad2.right_trigger, -1, 1);
+            }
+            else if(gamepad2.right_trigger != 0){
+                robotest = Range.clip(gamepad2.left_trigger - gamepad2.right_trigger, -1, 1);
+            }
+            else{robotest = 0.0;}
 
             frontLeftPower    = Range.clip((drive + strafe + turn)/slow, -0.75, 0.75);
             frontRightPower   = Range.clip((drive - strafe - turn)/slow, -0.75, 0.75);
@@ -149,10 +157,10 @@ public class CamdensDumbLayout extends LinearOpMode {
             }
             else{dpadright = 0;}
 
-            if (backLimit.isPressed() == false && ((gamepad2.dpad_right == false && gamepad2.dpad_left == true) || (gamepad2.right_stick_x < 0))){
+            if (backLimit.isPressed() == false && ((gamepad2.dpad_right == false && gamepad2.dpad_left == true))){
                 turnMechPower = 0.5;
             }
-            else if (frontLimit.isPressed() == false && ((gamepad2.dpad_right == true && gamepad2.dpad_left == false) || (gamepad2.right_stick_x > 0))){
+            else if (frontLimit.isPressed() == false && ((gamepad2.dpad_right == true && gamepad2.dpad_left == false))){
                 turnMechPower = -0.5;
             }
             else{turnMechPower = 0;}
