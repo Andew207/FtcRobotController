@@ -94,7 +94,7 @@ public class threeConeAutoL extends LinearOpMode {
     backLeftDrive.setPower(power);
     backRightDrive.setPower(power);
   }
-  public void strafe(boolean left, int position){
+  public boolean strafe(boolean left, int position){
     setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
     if (left == true){
@@ -104,6 +104,7 @@ public class threeConeAutoL extends LinearOpMode {
         backLeftDrive.setPower(0.3);
         backRightDrive.setPower(-0.3);
       }
+      return true;
     }
     else {
       while (frontLeftDrive.getCurrentPosition() < position && opModeIsActive()) {
@@ -112,6 +113,7 @@ public class threeConeAutoL extends LinearOpMode {
         backRightDrive.setPower(0.25);
         backLeftDrive.setPower(-0.25);
       }
+      return true;
     }
   }
   public void goToPosition(int position)
@@ -343,25 +345,24 @@ public class threeConeAutoL extends LinearOpMode {
     telemetry.addData("Final color:", rgb);
     telemetry.update();
     while(opModeIsActive()){
-      strafe(true, 320);
+      strafe(true, 310);
       setAllPower(0);
       break;
     }
     lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    while(opModeIsActive() && lift.getCurrentPosition() > -2500){
+    while(opModeIsActive() && lift.getCurrentPosition() > -3000){
       lift.setPower(-0.75);
       telemetry.addData("lift encoder", lift.getCurrentPosition());
       telemetry.update();
     }
     lift.setPower(0);
-    goToPosition(60);
+    goToPosition(50);
 
     timer.reset();
     timer.startTime();
     while (opModeIsActive() && !frontLimit.isPressed() && timer.time() < 1){
       turnMech.setPower(-0.25);
-      telemetry.addData("Button pressed?", frontLimit.isPressed());
     }
     turnMech.setPower(0);
     timer.reset();
@@ -375,15 +376,27 @@ public class threeConeAutoL extends LinearOpMode {
       lift.setPower(-0.75);
     }
     lift.setPower(0);
-    goToPosition(-60);
-    strafe(true, 5);
-    telemetry.addData("FR Encoder", frontRightDrive.getCurrentPosition());
-    telemetry.update();
-    //Thread.sleep(3000);
+    goToPosition(-50);
 
+    //strafe(true, 1);
+    while (opModeIsActive() && strafe(true,165) == false){
+      int c = 0;
+      telemetry.addData("Encoder", frontRightDrive.getCurrentPosition());
+    }
+    setAllPower(0);
+    //Thread.sleep(3000);
     while (opModeIsActive() && !backLimit.isPressed()){
       turnMech.setPower(0.5);
     }
+    goToPosition(-500);
+    lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    while(opModeIsActive() && lift.getCurrentPosition() > 300){
+      lift.setPower(-0.75);
+      telemetry.addData("lift encoder", lift.getCurrentPosition());
+      telemetry.update();
+    }
+    /*
     while(opModeIsActive() && lift.getCurrentPosition() > -2000){
       lift.setPower(-0.75);
     }
@@ -408,7 +421,7 @@ public class threeConeAutoL extends LinearOpMode {
     }
     servo.setPower(0);
     // NUMBERS ARE ALL WRONG, DO NOT RUN
-    /*strafe(false, 175);
+    *//*strafe(false, 175);
     timer.reset();
     timer.startTime();
     while(opModeIsActive() && timer.time() < 2){
@@ -426,6 +439,6 @@ public class threeConeAutoL extends LinearOpMode {
       turnMech.setPower(0.1);
     }
     turnMech.setPower(0);
-     *///
+     */
   }
 }
