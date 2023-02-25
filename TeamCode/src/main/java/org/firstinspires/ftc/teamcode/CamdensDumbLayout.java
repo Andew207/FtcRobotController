@@ -88,6 +88,8 @@ public class CamdensDumbLayout extends LinearOpMode {
         liftLimit = hardwareMap.touchSensor.get("liftLimit");
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turnMech.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turnMech.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         int slow = 1;
 
 
@@ -133,13 +135,17 @@ public class CamdensDumbLayout extends LinearOpMode {
                 changed = true;
             } else if(!gamepad1.b) changed = false;
             //Left trigger is down, lift motor is backwards
-            if (gamepad2.left_trigger != 0 && !liftLimit.isPressed()){
+            if (gamepad2.left_trigger != 0 && !liftLimit.isPressed()) {
                 robotest = Range.clip(gamepad2.left_trigger - gamepad2.right_trigger, -1, 1);
             }
-            else if(gamepad2.right_trigger != 0){
+            else if(gamepad2.right_trigger != 0 && lift.getCurrentPosition() > -4000){
                 robotest = Range.clip(gamepad2.left_trigger - gamepad2.right_trigger, -1, 1);
             }
             else{robotest = 0.0;}
+            if (liftLimit.isPressed()){
+                lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
 
             frontLeftPower    = Range.clip((drive + strafe + turn)/slow, -0.75, 0.75);
             frontRightPower   = Range.clip((drive - strafe - turn)/slow, -0.75, 0.75);
@@ -193,6 +199,7 @@ public class CamdensDumbLayout extends LinearOpMode {
             telemetry.addData("BR Encoder", backRightDrive.getCurrentPosition());
             telemetry.addData("lift encoder", lift.getCurrentPosition());
             telemetry.addData("Lift power", robotest);
+            telemetry.addData("turn", turnMech.getCurrentPosition());
 
             telemetry.addData("FL Power", frontLeftPower);
             telemetry.addData("FR Power", frontRightPower);

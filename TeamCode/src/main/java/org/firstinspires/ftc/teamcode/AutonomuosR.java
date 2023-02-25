@@ -320,7 +320,7 @@ public class AutonomuosR extends LinearOpMode {
     }
     lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    while(opModeIsActive() && lift.getCurrentPosition() > -2500){
+    while(opModeIsActive() && lift.getCurrentPosition() > -3000){
       lift.setPower(-0.75);
       telemetry.addData("lift encoder", lift.getCurrentPosition());
       telemetry.update();

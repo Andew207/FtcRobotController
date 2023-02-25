@@ -104,6 +104,7 @@ public class threeConeAutoL extends LinearOpMode {
         backLeftDrive.setPower(0.3);
         backRightDrive.setPower(-0.3);
       }
+      setAllPower(0);
       return true;
     }
     else {
@@ -113,6 +114,7 @@ public class threeConeAutoL extends LinearOpMode {
         backRightDrive.setPower(0.25);
         backLeftDrive.setPower(-0.25);
       }
+      setAllPower(0);
       return true;
     }
   }
@@ -379,7 +381,7 @@ public class threeConeAutoL extends LinearOpMode {
     goToPosition(-50);
 
     //strafe(true, 1);
-    while (opModeIsActive() && strafe(true,165) == false){
+    while (opModeIsActive() && strafe(true,175) == false){
       int c = 0;
       telemetry.addData("Encoder", frontRightDrive.getCurrentPosition());
     }
@@ -388,57 +390,58 @@ public class threeConeAutoL extends LinearOpMode {
     while (opModeIsActive() && !backLimit.isPressed()){
       turnMech.setPower(0.5);
     }
-    goToPosition(-500);
+    setAllPower(0);
+    goToPosition(-525);
     lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    while(opModeIsActive() && lift.getCurrentPosition() > 300){
+    while(opModeIsActive() && lift.getCurrentPosition() <= 1800){
+      lift.setPower(0.75);
+      telemetry.addData("lift encoder", lift.getCurrentPosition());
+      telemetry.update();
+    }
+    lift.setPower(0);
+    timer.reset();
+    timer.startTime();
+    while (opModeIsActive() && timer.time() < 1.5){
+      lift.setPower(0);
+      servo.setPower(0.5);
+    }
+    servo.setPower(0);
+    lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    while(opModeIsActive() && lift.getCurrentPosition() > -1500){
       lift.setPower(-0.75);
       telemetry.addData("lift encoder", lift.getCurrentPosition());
       telemetry.update();
     }
-    /*
-    while(opModeIsActive() && lift.getCurrentPosition() > -2000){
-      lift.setPower(-0.75);
-    }
     lift.setPower(0);
-    goToPosition(-100);
-    while(opModeIsActive() && lift.getCurrentPosition() > -1500){
-      lift.setPower(0.75);
-      servo.setPower(0.5);
+    goToPosition(65);
+    strafe(false, 250);
+    goToPosition(50);
+    while (opModeIsActive() && !frontLimit.isPressed()){
+      turnMech.setPower(-0.25);
     }
-    lift.setPower(0);
-    servo.setPower(0);
-    goToPosition(100);
-    strafe(true, 0);
-    while(opModeIsActive() && lift.getCurrentPosition() > -2000){
-      lift.setPower(-0.75);
-    }
-    goToPosition(60);
+    turnMech.setPower(0);
     timer.reset();
     timer.startTime();
-    while (opModeIsActive() && timer.time() < 2){
+    while (opModeIsActive() && timer.time() < 1.5){
+      setAllPower(0);
       servo.setPower(-0.5);
     }
     servo.setPower(0);
-    // NUMBERS ARE ALL WRONG, DO NOT RUN
-    *//*strafe(false, 175);
-    timer.reset();
-    timer.startTime();
-    while(opModeIsActive() && timer.time() < 2){
-      //heheheha
-      setAllPower(0);
-    }
-    if (rgb.equals("red")){
-      goToPosition(-390);
+    goToPosition(-60);
+    strafe(false,120);
+
+    if (rgb.equals("blue")){
+      goToPosition(430);
     }
     else if (rgb.equals("green")){
-      goToPosition(430);
+      goToPosition(1000);
     }
     setAllPower(0);
     while (opModeIsActive() && backLimit.isPressed() == false){
       turnMech.setPower(0.1);
     }
     turnMech.setPower(0);
-     */
   }
 }
