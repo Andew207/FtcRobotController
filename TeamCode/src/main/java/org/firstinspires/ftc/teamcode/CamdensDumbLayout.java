@@ -164,10 +164,10 @@ public class CamdensDumbLayout extends LinearOpMode {
             else{dpadright = 0;}
 
             if (backLimit.isPressed() == false && ((gamepad2.dpad_right == false && gamepad2.dpad_left == true))){
-                turnMechPower = 0.5;
+                turnMechPower = 0.75;
             }
             else if (frontLimit.isPressed() == false && ((gamepad2.dpad_right == true && gamepad2.dpad_left == false))){
-                turnMechPower = -0.5;
+                turnMechPower = -0.75;
             }
             else{turnMechPower = 0;}
 
